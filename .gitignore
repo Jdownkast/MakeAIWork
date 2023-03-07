@@ -15,6 +15,7 @@ notebooks/variables/.DS_Store
 scripts/.DS_Store
 scripts/solar_system/.DS_Store
 env/
+miw/
 log.txt
 .DS_Store
 scripts/shape/__pycache__

@@ -4,8 +4,9 @@
 			"path": "."
 		},
 		{
-			"path": "../Python/Projecten"
+			"path": "../Projecten"
 		}
 	],
-	"settings": {}
+	"settings": {},
+	"python.terminal.activateEnvironment": false
 }
