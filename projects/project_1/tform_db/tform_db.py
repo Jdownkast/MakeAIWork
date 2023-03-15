@@ -1,8 +1,18 @@
+import os
 import pandas as pd
+import numpy as np
+
+
+# Define function to clear all 'earlier' models from directory
+def remove_files(path, ext):
+    for f in os.listdir(path):
+        if ext in f:
+            os.remove(os.path.join(path, f))
+
 
 # Load csv
-# df = pd.read_csv("../dload_db/csv/db_mcr.csv")
-df = pd.read_csv("../dload_db/csv/static_db_mcr.csv")
+df = pd.read_csv("../dload_db/csv/db_mcr.csv")
+# df = pd.read_csv("../dload_db/csv/static_db_mcr.csv")
 
 # List non numerical data
 list_non_num = []
@@ -90,20 +100,62 @@ df["smoking few"] = df["smoking"].between(
     smoking_cat[0], smoking_cat[1], "right"
 )  # Smoking few (1-5) sigarettes as dummy
 df["smoking some"] = df["smoking"].between(
-    smoking_cat[0], smoking_cat[1], "right"
+    smoking_cat[1], smoking_cat[2], "right"
 )  # Smoking some (6-10) sigarettes as dummy
 df["smoking more"] = df["smoking"].between(
-    smoking_cat[1], smoking_cat[2], "right"
+    smoking_cat[2], smoking_cat[3], "right"
 )  # Smoking more (11-15) sigarettes as dummy
 df["smoking alot"] = df["smoking"].between(
-    smoking_cat[2], smoking_cat[3], "right"
+    smoking_cat[3], smoking_cat[4], "right"
 )  # Smoking alot (16-20) sigarettes as dummy
 df["smoking most"] = (
-    df["smoking"] > smoking_cat[3]
+    df["smoking"] > smoking_cat[4]
 )  # Smoking most (20+) sigarettes as dummy
 
-# Save different sets of data for modeling
-path_db_t = "csv/db_t1.csv"
+# Versions of datasets
+# Models that are not used already filtered
+df_dict = {
+    0: df,  # Complete dataset
+    1: df.iloc[:, np.r_[:9]],  # All continuous/ratio ('main') variables
+    2: df.iloc[:, np.r_[0:2, 4:9]],  # All main variables except length & mass
+    3: df.iloc[:, np.r_[0:8, 9:11]],  # M1, but bmi normalized
+    4: df.iloc[:, np.r_[0:8, 11:15]],  # M1, but bmi categorized
+    5: df.iloc[:, np.r_[0:5, 6:9, 15:20]],  # M1, but smoking categorized
+    6: df.iloc[:, np.r_[0:5, 6:8, 9:11, 15:20]],  # M3, but smoking categorized
+    7: df.iloc[:, np.r_[0:5, 6:8, 11:15, 15:20]],  # M4, but smoking categorized
+    8: df.iloc[:, np.r_[0:2, 4:8, 9:11]],  # M2, but bmi normalized
+    9: df.iloc[:, np.r_[0:2, 4:8, 11:15]],  # M2, but bmi categorized
+    10: df.iloc[:, np.r_[0:2, 4, 6:9, 15:20]],  # M2, but smoking categorized
+    11: df.iloc[:, np.r_[0:2, 4, 6:8, 9:11, 15:20]],  # M8, but smoking categorized
+    12: df.iloc[:, np.r_[0:2, 4, 6:8, 11:15, 15:20]],  # M9, but smoking categorized
+    13: df.iloc[:, np.r_[0:1, 2:9]],  # All main variables except genetics
+    14: df.iloc[:, np.r_[0:1, 4:9]],  # All main variables except gen., length & mass
+    15: df.iloc[:, np.r_[0:1, 2:8, 9:11]],  # M13, but bmi normalized
+    16: df.iloc[:, np.r_[0:1, 2:8, 11:15]],  # M13, but bmi categorized
+    17: df.iloc[:, np.r_[0:1, 3:5, 6:9, 15:20]],  # M13, but smoking categorized
+    18: df.iloc[:, np.r_[0:1, 3:5, 6:8, 9:11, 15:20]],  # M14, but smoking categorized
+    19: df.iloc[:, np.r_[0:1, 3:5, 6:8, 11:15, 15:20]],  # M15, but smoking categorized
+    20: df.iloc[:, np.r_[0:1, 2:8, 9:11]],  # M3, but without genetics
+    21: df.iloc[:, np.r_[0:2, 4:8]],  # M1, but without length, mass & bmi
+    22: df.iloc[:, np.r_[0:4, 5:8, 9:11]],  # M3, but without exercise
+    23: df.iloc[:, np.r_[0:5, 6:8, 9:11]],  # M3, but without smoking
+    24: df.iloc[:, np.r_[0:6, 7:8, 9:11]],  # M3, but without alcohol
+    25: df.iloc[:, np.r_[0:7, 9:11]],  # M3, but without sugar
+    26: df.iloc[:, np.r_[0:5, 7, 9:11]],  # M3, but without smoking & alcohol
+    27: df.iloc[:, np.r_[0:5, 9:11]],  # M3, but without smoking, alcohol & sugar
+    28: df.iloc[
+        :, np.r_[0:4, 9:11]
+    ],  # M3, but without exercise, smoking alcohol & sugar
+}
 
-df_t1 = df.iloc[:, :9]
-df_t1.to_csv(path_db_t, index=False)
+# Remove old and save new versions of datasets
+path_dataset = "./csv/"
+extension = ".csv"
+
+remove_files(path_dataset, extension)
+
+# Change save_dict for specific datasets,
+# otherwise [*range(len(df_dict))] to save all
+save_dict = [*range(len(df_dict))]
+for i in save_dict:
+    df_dict[i].to_csv(f"{path_dataset}db_t{str(i)}{extension}", index=False)
