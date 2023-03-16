@@ -2,9 +2,6 @@ import os
 import pandas as pd
 import numpy as np
 
-# Some code is added to create a 'line' of new models, see comments on top of the notebook
-new = True
-
 
 # Define function to clear all 'earlier' models from directory
 def remove_files(path, ext):
@@ -115,12 +112,15 @@ df["smoking most"] = (
     df["smoking"] > smoking_cat[4]
 )  # Smoking most (20+) sigarettes as dummy
 
-# This piece of code is added to create a 'line' of new models, see comments on top of the notebook
+# This piece of code is added to create a 'line' of new models, see comments on top of the notebook 
+new = True
 if new:
-    # Create and rename new variable 'dif_lifespan' as difference between genetic and lifespan
-    df["lifespan"] = df["lifespan"] - df["genetic"]
-    df.columns = ["dif_lifespan", *df.columns[1:]]
-
+    # Create and rename new variable 'dif_lifespan' as difference between genetic and lifespan 
+    df['lifespan'] = df['genetic'] - df['lifespan']
+    df.columns = ['dif_lifespan', *df.columns[1:]]
+    # Drop genetic as it is no longer used
+    df.drop(columns='genetic')
+        
 
 # Versions of datasets
 # Models that are not used already filtered
@@ -158,20 +158,11 @@ df_dict = {
     ],  # M3, but without exercise, smoking alcohol & sugar
 }
 
-# This piece of code is added to create a 'line' of new models, see comments on top of the notebook
-if new:
-    for dataset in df_dict:
-        df = df_dict[dataset]
-        if "genetic" in df:
-            df_dict[dataset] = df.loc[:, df.columns != "genetic"]
-
 # Remove old and save new versions of datasets
-path_dataset = "./csv/new_" if new else "./csv/"
+path_dataset = "./csv/"
 extension = ".csv"
 
-# Do you want to remove all old files in this directory?
-if False:
-    remove_files(path_dataset, new, extension)
+remove_files(path_dataset, extension)
 
 # Change save_dict for specific datasets,
 # otherwise [*range(len(df_dict))] to save all

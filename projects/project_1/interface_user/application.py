@@ -28,7 +28,7 @@ def index():
     expected = ""
     if form.validate_on_submit():
         session["param"] = {
-            "1_genetics": form.genetics.data,
+            "1_genetics": form.genetic.data,
             "2_length": form.length.data,
             "3_mass": form.weight.data,
             "4_exercise": form.exercise.data,
@@ -56,10 +56,10 @@ def model_3():
 
     expected_age = calc_expected(model, parameters)
     # expected = list(model.coef_[0])
-    expected = f"The expected age is {expected_age}"
+    expected = f"The expected age is {int(expected_age)} years and {round((expected_age % 1) * 12)} months."
     if form.validate_on_submit():
         session["param"] = {
-            "1_genetics": form.genetics.data,
+            "1_genetics": form.genetic.data,
             "2_length": form.length.data,
             "3_mass": form.weight.data,
             "4_exercise": form.exercise.data,

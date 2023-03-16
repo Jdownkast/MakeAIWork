@@ -1,5 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, BooleanField, RadioField
+from wtforms import (
+    StringField,
+    TextAreaField,
+    IntegerField,
+    BooleanField,
+    RadioField,
+    DecimalRangeField,
+)
 from wtforms.validators import InputRequired, NumberRange
 
 error_no_input = 'Please enter valid input, or check the "No data" checkbox'
@@ -16,33 +23,46 @@ valid_dict = {
 
 
 class InputForm(FlaskForm):
-    genetics = StringField(
-        f"Genetic age (in years; range: {valid_dict['genetic'][0]}-{valid_dict['genetic'][1]})",
-        validators=[InputRequired()],
+    genetic = StringField("Genetic age", validators=[InputRequired()])
+    genetic_unit = StringField("in years")
+    genetic_range = StringField(
+        f"range: {valid_dict['genetic'][0]} - {valid_dict['genetic'][1]}"
     )
-    length = StringField(
-        f"Length (in cm; range: {valid_dict['length'][0]}-{valid_dict['length'][1]})",
-        validators=[InputRequired()],
+
+    length = StringField("Length", validators=[InputRequired()])
+    length_unit = StringField("in centimeters")
+    length_range = StringField(
+        f"range: {valid_dict['length'][0]} - {valid_dict['length'][1]}"
     )
-    weight = StringField(
-        f"Weight (in kg; range: {valid_dict['mass'][0]}-{valid_dict['mass'][1]})",
-        validators=[InputRequired()],
+
+    weight = StringField("Weight", validators=[InputRequired()])
+    weight_unit = StringField("in kilogramms")
+    weight_range = StringField(
+        f"range: {valid_dict['mass'][0]} - {valid_dict['mass'][1]}"
     )
-    exercise = StringField(
-        f"Exercise (in hours / day; range: {valid_dict['exercise'][0]}-{valid_dict['exercise'][1]})",
-        validators=[InputRequired()],
+
+    exercise = StringField("Exercise", validators=[InputRequired()])
+    exercise_unit = StringField("in hours / day")
+    exercise_range = StringField(
+        f"range: {valid_dict['genetic'][0]} - {valid_dict['genetic'][1]}"
     )
-    smoking = StringField(
-        f"Smoking (in sigarettes / day; range: {valid_dict['smoking'][0]}-{valid_dict['smoking'][1]})",
-        validators=[InputRequired()],
+
+    smoking = StringField("Smoking", validators=[InputRequired()])
+    smoking_unit = StringField("in sigarettes / day")
+    smoking_range = StringField(
+        f"range: {valid_dict['smoking'][0]} - {valid_dict['smoking'][1]}"
     )
-    alcohol = StringField(
-        f"Alcohol intake (in glasses / day; range: {valid_dict['alcohol'][0]}-{valid_dict['alcohol'][1]})",
-        validators=[InputRequired()],
+
+    alcohol = StringField(f"Alcohol intake", validators=[InputRequired()])
+    alcohol_unit = StringField("in glasses / day")
+    alcohol_range = StringField(
+        f"range: {valid_dict['alcohol'][0]} - {valid_dict['alcohol'][1]}"
     )
-    sugar = StringField(
-        f"Sugar intake (in g / day; range: {valid_dict['sugar'][0]}-{valid_dict['sugar'][1]})",
-        validators=[InputRequired()],
+
+    sugar = StringField(f"Sugar intake", validators=[InputRequired()])
+    sugar_unit = StringField("in gramms / day")
+    sugar_range = StringField(
+        f"range: {valid_dict['sugar'][0]} - {valid_dict['sugar'][1]}"
     )
 
     # available = BooleanField("Available", default="checked")

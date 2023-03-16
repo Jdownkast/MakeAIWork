@@ -3,63 +3,114 @@
 
 <head>
     <title>Calculate predicted age</title>
-    <meta name="description" content="Our first page">
-    <meta name="keywords" content="html tutorial template">
+    <style>
+        div.body {
+            display: block;
+            text-align: center;
+        }
+
+        div.content {
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        form {
+            display: inline-block;
+            margin-left: 10%;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        ol {
+            list-style-position: inside;
+            padding-left: 0
+        }
+    </style>
 </head>
 
 <body>
-    <p style="font-size: 10px">David Productions<sup>&#169;</sup></p>
-    <div class="content">
-        <p>
-            Instructions:<br>
-        <ol>
-            <li>Fill in the available information for the client.</li>
-            <li>Send the information to the model.</li>
-            <li>The expected age is returned, as well as and advise how to increase expected age and information about
-                the
-                model that is used.</li>
-        </ol>
-        </p>
-        <p>
-        <form method="POST" action="/">
-            {{ form.csrf_token }}
-            <p>
-                {{ form.genetics.label }}
-                {{ form.genetics(size=20, pattern="[4-9][0-9]|1[0-1][0-9]|120") }}<br>
+    <div class="body">
+        <br>
+        <br>
+        <h2>This application is used to calculate the impact of lifestyle on predicted lifespan.</h3>
+            <p style="font-size: 10px">David Productions<sup>&#169;</sup></p>
 
-                {{ form.length.label }}
-                {{ form.length(size=20, pattern="14[7-9]|1[5-9][0-9]|2[0-1][0-9]|220") }}<br>
-
-                {{ form.weight.label }}
-                {{ form.weight(size=20, pattern="[3-9][0-9]|1[0-9][0-9]|200") }}<br>
-
-                {{ form.exercise.label }}
-                {{ form.exercise(size=20, pattern="[0-8]") }}<br>
-
-                {{ form.smoking.label }}
-                {{ form.smoking(size=20, pattern="[0-9]|[0-5][0-9]|60") }}<br>
-
-                {{ form.alcohol.label }}
-                {{ form.alcohol(size=20, pattern="[0-9]|1[0-2]") }}<br>
-
-                {{ form.sugar.label }}
-                {{ form.sugar(size=20, pattern="[0-9]|[0-4][0-0]|50") }}<br>
-            </p>
-            {% if form.genetics.errors %}
-            <ul class="errors">
-                {% for error in form.genetics.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            <p>
-                <input type="submit" value="Calculate expected age">
-            </p>
-            <p>
-                {{ expected }}
-            </p>
-        </form>
-        </p>
+            <div class="content">
+                <p>
+                    Instructions:<br>
+                <ol>
+                    <li>Fill in the available lifestyle information. If not all information is available, the
+                        appropriate model will be automatically chosen.</li>
+                    <li>Send the information to the model via the 'Calculate expected lifespan' button.</li>
+                    <li>The expected age is returned, as well as and advise how to increase expected age and information
+                        about the model that is used.</li>
+                </ol>
+            </div>
+            <div class="form">
+                </p>
+                <p>
+                <form method="POST" action="/">
+                    {{ form.csrf_token }}
+                    <table width="80%" , class="center">
+                        <col style="width:30%">
+                        <col style="width:25%">
+                        <col style="width:25%">
+                        <col style="width:20%">
+                        <tr>
+                            <td>{{ form.genetic.label }}</td>
+                            <td><i>{{ form.genetic_unit.label }}</i></td>
+                            <td><i>{{ form.genetic_range.label }}</i></td>
+                            <td>{{ form.genetic(size=20, pattern="[4-9][0-9]|1[0-1][0-9]|120") }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.length.label }}</td>
+                            <td><i>{{ form.length_unit.label }}</i></td>
+                            <td><i>{{ form.length_range.label }}</i></td>
+                            <td>{{ form.length(size=20, pattern="14[7-9]|1[5-9][0-9]|2[0-1][0-9]|220") }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.weight.label }}</td>
+                            <td><i>{{ form.weight_unit.label }}</i></td>
+                            <td><i>{{ form.weight_range.label }}</i></td>
+                            <td>{{ form.weight(size=20, pattern="[3-9][0-9]|1[0-9][0-9]|200") }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.exercise.label }}</td>
+                            <td><i>{{ form.exercise_unit.label }}</i></td>
+                            <td><i>{{ form.exercise_range.label }}</i></td>
+                            <td>{{ form.exercise(size=20, pattern="[0-8]") }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.smoking.label }}</td>
+                            <td><i>{{ form.smoking_unit.label }}</i></td>
+                            <td><i>{{ form.smoking_range.label }}</i></td>
+                            <td>{{ form.smoking(size=20, pattern="[0-9]|[0-5][0-9]|60") }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.alcohol.label }}</td>
+                            <td><i>{{ form.alcohol_unit.label }}</i></td>
+                            <td><i>{{ form.alcohol_range.label }}</i></td>
+                            <td>{{ form.alcohol(size=20, pattern="[0-9]|1[0-2]") }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.sugar.label }}</td>
+                            <td><i>{{ form.sugar_unit.label }}</i></td>
+                            <td><i>{{ form.sugar_range.label }}</i></td>
+                            <td>{{ form.sugar(size=20, pattern="[0-9]|[0-4][0-0]|50") }}</td>
+                        </tr>
+                    </table>
+                    <p>
+                        <input type="submit" value="Calculate expected lifespan">
+                    </p>
+                    <p>
+                        {{ expected }}
+                    </p>
+                </form>
+                </p>
+            </div>
     </div>
 </body>
 
