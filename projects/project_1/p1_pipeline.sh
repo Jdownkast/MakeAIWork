@@ -6,7 +6,7 @@ source dload_db.sh
 cd ../tform_db
 python tform_db.py
 
-# cd ../train_model
-# python train_model.py
+cd ../train_model
+python train_model.py
 
 cd ../../..

@@ -2,7 +2,7 @@
 
 port=8080
 start_page=1
-url="http://localhost:8080/medish_centrum_randstad/api/netlify?page=${start_page}"
+url="http://localhost:8080/medisch_centrum_randstad/api/netlify?page=${start_page}"
  
 # source ./browse.sh ${url} 5 &
 
