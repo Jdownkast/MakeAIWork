@@ -7,10 +7,14 @@ new = True
 
 
 # Define function to clear all 'earlier' models from directory
-def remove_files(path, ext):
+def remove_files(path, new_, ext):
     for f in os.listdir(path):
-        if ext in f:
-            os.remove(os.path.join(path, f))
+        if len(new_) == 0:
+            if ext in f and not new_ in f:
+                os.remove(os.path.join(path, f))
+        else:
+            if ext in f and new_ in f:
+                os.remove(os.path.join(path, f))
 
 
 # Load csv
@@ -115,66 +119,52 @@ df["smoking most"] = (
     df["smoking"] > smoking_cat[4]
 )  # Smoking most (20+) sigarettes as dummy
 
-# This piece of code is added to create a 'line' of new models, see comments on top of the notebook
-if new:
-    # Create and rename new variable 'dif_lifespan' as difference between genetic and lifespan
-    df["lifespan"] = df["lifespan"] - df["genetic"]
-    df.columns = ["dif_lifespan", *df.columns[1:]]
-
-
 # Versions of datasets
-# Models that are not used already filtered
-df_dict = {
-    0: df,  # Complete dataset
-    1: df.iloc[:, np.r_[:9]],  # All continuous/ratio ('main') variables
-    2: df.iloc[:, np.r_[0:2, 4:9]],  # All main variables except length & mass
-    3: df.iloc[:, np.r_[0:8, 9:11]],  # M1, but bmi normalized
-    4: df.iloc[:, np.r_[0:8, 11:15]],  # M1, but bmi categorized
-    5: df.iloc[:, np.r_[0:5, 6:9, 15:20]],  # M1, but smoking categorized
-    6: df.iloc[:, np.r_[0:5, 6:8, 9:11, 15:20]],  # M3, but smoking categorized
-    7: df.iloc[:, np.r_[0:5, 6:8, 11:15, 15:20]],  # M4, but smoking categorized
-    8: df.iloc[:, np.r_[0:2, 4:8, 9:11]],  # M2, but bmi normalized
-    9: df.iloc[:, np.r_[0:2, 4:8, 11:15]],  # M2, but bmi categorized
-    10: df.iloc[:, np.r_[0:2, 4, 6:9, 15:20]],  # M2, but smoking categorized
-    11: df.iloc[:, np.r_[0:2, 4, 6:8, 9:11, 15:20]],  # M8, but smoking categorized
-    12: df.iloc[:, np.r_[0:2, 4, 6:8, 11:15, 15:20]],  # M9, but smoking categorized
-    13: df.iloc[:, np.r_[0:1, 2:9]],  # All main variables except genetics
-    14: df.iloc[:, np.r_[0:1, 4:9]],  # All main variables except gen., length & mass
-    15: df.iloc[:, np.r_[0:1, 2:8, 9:11]],  # M13, but bmi normalized
-    16: df.iloc[:, np.r_[0:1, 2:8, 11:15]],  # M13, but bmi categorized
-    17: df.iloc[:, np.r_[0:1, 3:5, 6:9, 15:20]],  # M13, but smoking categorized
-    18: df.iloc[:, np.r_[0:1, 3:5, 6:8, 9:11, 15:20]],  # M14, but smoking categorized
-    19: df.iloc[:, np.r_[0:1, 3:5, 6:8, 11:15, 15:20]],  # M15, but smoking categorized
-    20: df.iloc[:, np.r_[0:1, 2:8, 9:11]],  # M3, but without genetics
-    21: df.iloc[:, np.r_[0:2, 4:8]],  # M1, but without length, mass & bmi
-    22: df.iloc[:, np.r_[0:4, 5:8, 9:11]],  # M3, but without exercise
-    23: df.iloc[:, np.r_[0:5, 6:8, 9:11]],  # M3, but without smoking
-    24: df.iloc[:, np.r_[0:6, 7:8, 9:11]],  # M3, but without alcohol
-    25: df.iloc[:, np.r_[0:7, 9:11]],  # M3, but without sugar
-    26: df.iloc[:, np.r_[0:5, 7, 9:11]],  # M3, but without smoking & alcohol
-    27: df.iloc[:, np.r_[0:5, 9:11]],  # M3, but without smoking, alcohol & sugar
-    28: df.iloc[
-        :, np.r_[0:4, 9:11]
-    ],  # M3, but without exercise, smoking alcohol & sugar
-}
+# Var numbering 0: lifespan, 1: genetics, 2: length, 3: mass, 4: exercise,
+# Var numbering 5: smoking, 6: alcohol, 7: sugar, 9 & 10: normalized bmi
 
-# This piece of code is added to create a 'line' of new models, see comments on top of the notebook
+# All models, old and new
+df_dict = {
+    0: df.iloc[:, np.r_[0:8, 9:11]],  # All variables, bmi normalized
+    1: df.iloc[:, np.r_[0:2, 3:8]],  # Without length & bmi
+    2: df.iloc[:, np.r_[0:3, 4:8]],  # Without mass & bmi
+    3: df.iloc[:, np.r_[0:2, 4:8]],  # Without length, mass & bmi
+    4: df.iloc[:, np.r_[0:4, 5:8, 9:11]],  # Without exercise
+    5: df.iloc[:, np.r_[0:5, 6:8, 9:11]],  # Without smoking
+    6: df.iloc[:, np.r_[0:6, 7:8, 9:11]],  # Without alcohol
+    7: df.iloc[:, np.r_[0:7, 9:11]],  # Without sugar
+    8: df.iloc[:, np.r_[0:4, 6:8, 9:11]],  # Without exercise and smoking
+    9: df.iloc[:, np.r_[0:4, 5:6, 7:8, 9:11]],  # Without exercise and alcohol
+    10: df.iloc[:, np.r_[0:4, 5:7, 9:11]],  # Without exercise and sugar
+    11: df.iloc[:, np.r_[0:5, 7:8, 9:11]],  # Without smoking and alcohol
+    12: df.iloc[:, np.r_[0:5, 6:7, 9:11]],  # Without smoking and sugar
+    13: df.iloc[:, np.r_[0:6, 9:11]],  # Without alcohol and sugar
+    14: df.iloc[:, np.r_[0:4, 7:8, 9:11]],  # Without exercise, smoking and alcohol
+    15: df.iloc[:, np.r_[0:4, 6:7, 9:11]],  # Without exercise, smoking and sugar
+    16: df.iloc[:, np.r_[0:4, 9:11]],  # Without exercise, smoking, alcohol and sugar
+}
+# For the new models: 'lifespan' is substituted by 'lifespan - genetics', 'genetics' is omitted
 if new:
     for dataset in df_dict:
         df = df_dict[dataset]
-        if "genetic" in df:
-            df_dict[dataset] = df.loc[:, df.columns != "genetic"]
+        # Substitute
+        df.columns = ["dif_lifespan", *df.columns[1:]]
+        df.iloc[:, 0] = df.iloc[:, 0] - df.iloc[:, 1]
+        # Remove
+        df_dict[dataset] = df.iloc[:, np.r_[0, 2 : len(df.columns)]]
+
 
 # Remove old and save new versions of datasets
-path_dataset = "./csv/new_" if new else "./csv/"
+path_dataset = "./csv/"
+new_ = "new_" if new else ""
 extension = ".csv"
 
-# Do you want to remove all old files in this directory?
-if False:
-    remove_files(path_dataset, new, extension)
+# Do you want to remove the old models in this directory?
+if True:
+    remove_files(path_dataset, new_, extension)
 
-# Change save_dict for specific datasets,
-# otherwise [*range(len(df_dict))] to save all
-save_dict = [*range(len(df_dict))]
-for i in save_dict:
-    df_dict[i].to_csv(f"{path_dataset}db_t{str(i)}{extension}", index=False)
+# Save datasets
+for dataset in df_dict:
+    df_dict[dataset].to_csv(
+        f"{path_dataset}{new_}db_t{str(dataset)}{extension}", index=False
+    )

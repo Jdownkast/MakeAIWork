@@ -1,4 +1,6 @@
 import os
+from os import listdir
+from os.path import isfile, join
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -6,6 +8,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 import statsmodels.api as sm
 import pickle
+
+# Setting to switch from old to new datasets
+new = False
 
 # Set a naming dictionary, to easily change names
 naming = {
@@ -25,16 +30,16 @@ naming = {
 for key, name in naming.items():
     exec(key + "=name")
 
-# Select datasets to be modelled
-datasets = [1, 3, *range(20, 29)]  # All datasets (except 0)
-
 # Initialize dictionary and load datasets
 initial_dict = {}
 path_datasets = "../tform_db/csv/"
 
-for dataset in datasets:
-    model_name = m_name + str(dataset)
-    file = f"{path_datasets}db_t{str(dataset)}.csv"
+# Count datasets in csv/tform
+datafiles = [f for f in listdir(path_datasets) if isfile(join(path_datasets, f))]
+
+for dataset in datafiles:
+    model_name = dataset[:-4] if ".csv" in dataset else dataset
+    file = f"{path_datasets}{dataset}"
     initial_dict[model_name] = {all_data: pd.read_csv(file)}
 
 
@@ -82,116 +87,17 @@ def lr_dict(initial_dict):
     return initial_dict
 
 
-# Defining the function to summarize the models
-def model_summary(models_dict, level="extended"):
-    # Preloading variables/summary
-    var = "Variable"
-    coef = "Coefficient"
-    sig = "P-value"
-    col_names = [var, coef, sig]
-
-    param = "Parameters"
-    metric = "Metrics"
-    summary = {}
-
-    for mod in models_dict:
-        # Per model, get coefficients
-        summary[mod] = mod
-        df_int = pd.DataFrame(
-            {var: "Intercept", coef: models_dict[mod][model].intercept_, sig: 0}
-        )
-        df_coef = pd.DataFrame(
-            zip(
-                models_dict[mod][x_test].columns,
-                models_dict[mod][model].coef_[0],
-                np.zeros(len(models_dict[mod][x_test])),
-            ),
-            columns=col_names,
-        )
-        summary[mod] = {}
-        summary[mod][param] = pd.concat([df_int, df_coef], axis=0, ignore_index=True)
-
-        # Per model, get p-values (inefficiently done with statsmodels, but...)
-        x_train_sm = models_dict[mod][x_train].copy()
-        x_train_sm.insert(0, "intercept", np.ones(len(x_train_sm)))
-        modsm = sm.OLS(models_dict[mod][y_train], x_train_sm.astype(float))
-        modsm = modsm.fit()
-        summary[mod][param][sig] = modsm.pvalues.values.round(3)
-
-        # Per model, get the regression metrics
-        summary[mod][metric] = {}
-        summary[mod][metric]["r2"] = metrics.r2_score(
-            models_dict[mod][y_test], models_dict[mod][y_pred]
-        )
-        summary[mod][metric]["mse"] = metrics.mean_squared_error(
-            models_dict[mod][y_test], models_dict[mod][y_pred]
-        )
-        summary[mod][metric]["rmse"] = np.sqrt(summary[mod][metric]["mse"])
-        summary[mod][metric]["msle"] = metrics.mean_squared_log_error(
-            models_dict[mod][y_test], models_dict[mod][y_pred]
-        )
-        summary[mod][metric]["mae"] = metrics.mean_absolute_error(
-            models_dict[mod][y_test], models_dict[mod][y_pred]
-        )
-
-        # Per model, print the summary depending on 'extended' or 'limited' level
-        if level == "extended" or level == "ext":
-            # pd.set_option("display.precision", 3)
-            print(mod, ":")
-            print(summary[mod][param])
-            print("\n")
-            print(
-                "R-squared: ",
-                "%.4f" % round(summary[mod][metric]["r2"], 4),
-                "; Mean squared error: ",
-                "%.4f" % round(summary[mod][metric]["mse"], 4),
-                "; Root mean squared error: ",
-                "%.4f" % round(summary[mod][metric]["rmse"], 4),
-                sep="",
-            )
-            print("___ \n")
-            # pd.reset_option("display.precision")
-        elif level == "limited" or level == "lim":
-            print(
-                mod,
-                ":",
-                " R-squared: ",
-                "%.4f" % round(summary[mod][metric]["r2"], 4),
-                "; Mean squared error: ",
-                "%.4f" % round(summary[mod][metric]["mse"], 4),
-                "; Root mean squared error: ",
-                "%.4f" % round(summary[mod][metric]["rmse"], 4),
-                sep="",
-            )
-        else:
-            print(
-                "Please use level "
-                "extended"
-                " ("
-                "ext"
-                ") or "
-                "limited"
-                " ("
-                "lim"
-                ") or omit a choice."
-            )
-
-    # Return summary to be saved if desired
-    return summary
-
-
 # Fit models and save in models_dict
 models_dict = lr_dict(initial_dict)
 
-# Can be turned off
-if True:
-    path_models = "./models/"
-    extension = ".pickle"
+# Saving models
+path_models = "./models/"
+extension = ".pickle"
 
-    # Delete all models in directory
-    remove_files(path_models, extension)
+# Delete all models in directory
+remove_files(path_models, extension)
 
-    # Save all new models
-    for mod in models_dict:
-        filename = f"{path_models}{mod}{extension}"
-        pickle.dump(models_dict[mod][model], open(filename, "wb"))
+# Save all new models
+for mod in models_dict:
+    filename = f"{path_models}{mod}{extension}"
+    pickle.dump(models_dict[mod][model], open(filename, "wb"))

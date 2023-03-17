@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-cd .
+cd ~/MakeAIWork/projects/project_1/interface_user
 flask --app application --debug run
