@@ -1,13 +1,9 @@
-import os
-from os import listdir
+from os import listdir, path, remove
 from os.path import isfile, join
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn import metrics
-import statsmodels.api as sm
-import pickle
+from pickle import dump
 
 # Set a naming dictionary, to easily change names
 naming = {
@@ -44,10 +40,10 @@ for dataset in datafiles:
 
 # Custom functions
 # Remove files in a specific path with a specific extension
-def remove_files(path, ext):
-    for f in os.listdir(path):
+def remove_files(path_, ext):
+    for f in listdir(path_):
         if ext in f:
-            os.remove(os.path.join(path, f))
+            remove(path.join(path_, f))
 
 
 # Defining the linear regression model
@@ -99,4 +95,4 @@ remove_files(path_models, extension)
 # Save all new models
 for mod in models_dict:
     filename = f"{path_models}{mod}{extension}"
-    pickle.dump(models_dict[mod][model], open(filename, "wb"))
+    dump(models_dict[mod][model], open(filename, "wb"))

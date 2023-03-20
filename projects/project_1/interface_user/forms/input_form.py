@@ -65,4 +65,14 @@ class InputForm(FlaskForm):
         f"range: {valid_dict['sugar'][0]} - {valid_dict['sugar'][1]}"
     )
 
-    # available = BooleanField("Available", default="checked")
+
+class CheckForm(FlaskForm):
+    genetic_bool = BooleanField(default="checked")
+    length_bool = BooleanField(default="checked")
+    weight_bool = BooleanField(default="checked")
+    exercise_bool = BooleanField(default="checked")
+    smoking_bool = BooleanField(default="checked")
+    alcohol_bool = BooleanField(default="checked")
+    sugar_bool = BooleanField(default="checked")
+    enetic_bool = BooleanField(default="checked")
+    enetic_bool = BooleanField(default="checked")

@@ -1,13 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    TextAreaField,
-    IntegerField,
-    BooleanField,
-    RadioField,
-    DecimalRangeField,
-)
-from wtforms.validators import InputRequired, NumberRange
+from wtforms import StringField
+from wtforms.validators import InputRequired
 
 error_no_input = 'Please enter valid input, or check the "No data" checkbox'
 valid_dict = {

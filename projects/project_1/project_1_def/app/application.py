@@ -4,7 +4,7 @@ from forms.input_form import InputForm
 
 # Load model via pickle.load
 file_path = "../models/"
-file_name = "model_3.pickle"
+file_name = "model_0.pickle"
 model = load(open(f"{file_path}{file_name}", "rb"))
 
 

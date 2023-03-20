@@ -1,4 +1,4 @@
-import os
+from os import remove, listdir, path
 import pandas as pd
 import numpy as np
 
@@ -6,14 +6,14 @@ import numpy as np
 # We iterate through 'new' as false and true in order to transform the two types
 for new in [False, True]:
     # Define function to clear all 'earlier' models from directory
-    def remove_files(path, new_, ext):
-        for f in os.listdir(path):
+    def remove_files(path_, new_, ext):
+        for f in listdir(path_):
             if len(new_) == 0:
                 if ext in f and not new_ in f:
-                    os.remove(os.path.join(path, f))
+                    remove(path.join(path_, f))
             else:
                 if ext in f and new_ in f:
-                    os.remove(os.path.join(path, f))
+                    remove(path.join(path_, f))
 
     # Load csv
     df = pd.read_csv("../../csv/database/db_mcr.csv")
@@ -139,7 +139,9 @@ for new in [False, True]:
         13: df.iloc[:, np.r_[0:6, 9:11]],  # Without alcohol and sugar
         14: df.iloc[:, np.r_[0:4, 7:8, 9:11]],  # Without exercise, smoking and alcohol
         15: df.iloc[:, np.r_[0:4, 6:7, 9:11]],  # Without exercise, smoking and sugar
-        16: df.iloc[
+        16: df.iloc[:, np.r_[0:4, 6:7, 9:11]],  # Without exercise, alcohol and sugar
+        17: df.iloc[:, np.r_[0:4, 6:7, 9:11]],  # Without smoking, alcohol and sugar
+        18: df.iloc[
             :, np.r_[0:4, 9:11]
         ],  # Without exercise, smoking, alcohol and sugar
     }
