@@ -2,8 +2,7 @@
 
 # Change directory to directory where file is located
 BASEDIR=$(dirname "$0")
-# cd $BASEDIR
-cd ~/MakeAIWork/projects/project_1/project_1_def
+cd $BASEDIR
 
 # Start application (flask development server)
 cd ./app
