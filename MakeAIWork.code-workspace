@@ -4,6 +4,9 @@
 			"path": "."
 		},
 		{
+			"path": "../MakeAIWork2"
+		}
+		{
 			"path": "../Projecten"
 		}
 	],
